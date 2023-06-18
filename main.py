@@ -1,12 +1,13 @@
 import requests
+import matplotlib.pyplot as plt
 
 import const as const
 
 
 def get_league_info(league_id):
-    our_league_url = const.BASE_URL + f"leagues-classic/{league_id}/standings/"
+    league_api_endpoint = const.BASE_URL + f"leagues-classic/{league_id}/standings/"
 
-    response = requests.get(our_league_url)
+    response = requests.get(league_api_endpoint)
     if response.status_code == 200:
         data = response.json()
         teams_ids = {}
@@ -19,7 +20,7 @@ def get_league_info(league_id):
         print("[ERROR] Failed to get response.")
         return None
 
-        print(teams_ids)
+    print(teams_ids)
     return teams_ids
 
 
@@ -55,18 +56,47 @@ def collect_team_results_by_each_round(teams):
     return team_results_dict
 
 
+# build a plot based on data object (list of dicts)
+def plot_team_results(data):
+    plt.figure(figsize=(10, 6))  # Set the size of the plot
+
+    for team_name, round_points in data.items():
+        rounds = [round_num for round_num, _ in round_points]
+        points = [points for _, points in round_points]
+
+        plt.plot(rounds, points, label=team_name)  # Plot the line for each team
+
+    plt.xlabel('Round')
+    plt.ylabel('Points')
+    plt.title('Team Results')
+    plt.legend()  # Show the team names in the legend
+    plt.grid(True)  # Add gridlines to the plot
+    plt.show()
+
+
 def main():
     league_id = 650483  # Replace with your league ID
     teams = get_league_info(league_id)
 
-    if teams is not None:
+    if teams:
         team_results_dict = collect_team_results_by_each_round(teams)
 
+        data = {}  # Data object to store team results
+
         for team_name, team_results in team_results_dict.items():
-            print(f"Team: {team_name}")
-            for event, total_points in team_results.items():
-                print(f"Round {event}: {total_points} points")
-            print()
+            round_points = [(round_num, points) for round_num, points in team_results.items()]
+            data[team_name] = round_points
+            #
+            # print(f"Team: {team_name}")
+            # for event, total_points in team_results.items():
+            #     print(f"Round {event}: {total_points} points")
+            # print()
+
+        # Print the data object
+        #print(data)
+
+        #build a plot
+        plot_team_results(data)
 
 
 if __name__ == '__main__':
