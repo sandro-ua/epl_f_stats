@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-GB">
 <head>
-<title>Fantasy League</title>
+<title>Fantasy League stats</title>
     <style>
         body {
             background-color: #82bcc1;
@@ -30,9 +30,18 @@
         <input type="text" name="league_id" placeholder="Enter League ID" required>
         <button type="submit">Show</button>
     </form>
-    {% if plot_image %}
+    {% if plot_image_1 %}
+    <h2>Total points per round</h2>
     <div class="plot-container">
-        <img class="plot-image" src="data:image/png;base64,{{ plot_image }}" alt="Plot">
+        <img class="plot-image" src="data:image/png;base64,{{ plot_image_1 }}" alt="Plot_1">
+    </div>
+    {% endif %}
+    <br>
+    <br>
+    {% if plot_image_2 %}
+    <h2>Total cost per round</h2>
+    <div class="plot-container">
+        <img class="plot-image" src="data:image/png;base64,{{ plot_image_2 }}" alt="Plot_2">
     </div>
     {% endif %}
 </body>
