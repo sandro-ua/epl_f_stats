@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fantasy League</title>
+    <style>
+        body {
+            background-color: #82bcc1;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .plot-container {
+            text-align: center;
+        }
+        .plot-image {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Enter your league code to see line graphs of teams in your league</h1>
+
+    <form method="post" action="{{ url_for('home') }}">
+        <input type="text" name="league_id" placeholder="Enter League ID" required>
+        <button type="submit">Show</button>
+    </form>
+    {% if plot_image %}
+    <div class="plot-container">
+        <img class="plot-image" src="data:image/png;base64,{{ plot_image }}" alt="Plot">
+    </div>
+    {% endif %}
+</body>
+</html>
