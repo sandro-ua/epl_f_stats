@@ -24,7 +24,7 @@
     </style>
 </head>
 <body>
-    <h1>Enter your league code to see line graphs of teams in your league</h1>
+    <h1>Enter league code to see line graphs of teams in the league</h1>
 
     <form method="post" action="{{ url_for('home') }}">
         <input type="text" name="league_id" placeholder="Enter League ID" required>
@@ -42,6 +42,14 @@
     <h2>Total cost per round</h2>
     <div class="plot-container">
         <img class="plot-image" src="data:image/png;base64,{{ plot_image_2 }}" alt="Plot_2">
+    </div>
+    {% endif %}
+    <br>
+    <br>
+    {% if plot_image_3 %}
+    <h2>Team place per round</h2>
+    <div class="plot-container">
+        <img class="plot-image" src="data:image/png;base64,{{ plot_image_3 }}" alt="Plot_3">
     </div>
     {% endif %}
 </body>

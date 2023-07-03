@@ -101,7 +101,11 @@ def get_team_results(data):
         total_points = event['total_points']
         team_results.append((event_id, total_points))
 
+    # Sort teams by total points in each round
+    team_results.sort(key=lambda x: x[1], reverse=True)
+
     return team_results
+
 
 # Get team cost by each round
 def get_team_cost(data):
@@ -125,6 +129,27 @@ def collect_team_results_by_each_round(teams):
 
     return team_results_dict
 
+
+# Return team place per round
+def collect_team_place_by_each_round(team_results_dict):
+    round_places_dict = {}
+
+    # Create a dictionary to store the points of each team in each round
+    for team_name, team_results in team_results_dict.items():
+        for round_num, points in team_results:
+            if round_num not in round_places_dict:
+                round_places_dict[round_num] = {}
+            round_places_dict[round_num][team_name] = points
+
+    # Sort the teams in each round based on their points
+    for round_num, teams_points in round_places_dict.items():
+        sorted_teams = sorted(teams_points.items(), key=lambda x: x[1], reverse=True)
+        places = {team[0]: i + 1 for i, team in enumerate(sorted_teams)}
+        round_places_dict[round_num] = places
+
+    return round_places_dict
+
+
 def collect_team_cost_by_each_round(teams):
     team_cost_dict = {}
 
@@ -136,7 +161,7 @@ def collect_team_cost_by_each_round(teams):
 
     return team_cost_dict
 
-# build a plot based on data object (list of dicts)
+# build a plot 'Team Result' based on data object (list of dicts)
 def plot_team_results(data):
     fig = Figure(figsize=(10, 6))
     ax = fig.add_subplot(111)
@@ -155,7 +180,7 @@ def plot_team_results(data):
 
     return fig
 
-# build a plot based on data object (list of dicts)
+# build a plot 'Team Cost per round' based on data object (list of dicts)
 def plot_team_cost(data):
     fig = Figure(figsize=(10, 6))
     ax = fig.add_subplot(111)
@@ -169,6 +194,25 @@ def plot_team_cost(data):
     ax.set_title('Team Cost per round')
     ax.set_xlabel('Round')
     ax.set_ylabel('Cost')
+    ax.legend()
+    ax.grid(True)
+
+    return fig
+
+# build a plot 'Team place per round' based on data object (list of dicts)
+def plot_team_place(data):
+    fig = Figure(figsize=(10, 6))
+    ax = fig.add_subplot(111)
+
+    for team_name, round_places in data.items():
+        rounds = [round_num for round_num, _ in round_places.items()]
+        places = [place for _, place in round_places.items()]
+
+        ax.plot(rounds, places, label=team_name)
+
+    ax.set_title('Team place per round')
+    ax.set_xlabel('Round')
+    ax.set_ylabel('Place')
     ax.legend()
     ax.grid(True)
 
@@ -210,8 +254,13 @@ def home():
     fig_2 = plot_team_cost(team_cost)
     plot_image_2 = process_plot(fig_2)
 
+    # Build plot #3
+    places = collect_team_place_by_each_round(team_results_dict)
+    fig_3 = plot_team_place(places)
+    plot_image_3 = process_plot(fig_3)
+
     # Render html page
-    return render_template(const.HOME_HTML, plot_image_1=plot_image_1, plot_image_2=plot_image_2)
+    return render_template(const.HOME_HTML, plot_image_1=plot_image_1, plot_image_2=plot_image_2, plot_image_3=plot_image_3)
 
 if __name__ == '__main__':
     logger.info("App started.")
