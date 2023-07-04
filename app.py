@@ -16,18 +16,19 @@ formatter = logging.Formatter("%(asctime)s %(name)-20s %(levelname)-8s %(message
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-
 app = Flask(__name__)
 
 
 # Create a directories to store leagues and teams data
-def create_data_dirs (dirs):
+def create_data_dirs(dirs):
     for dir in dirs:
         if not os.path.exists(dir):
             os.makedirs(dir)
             logger.info(f"Directory {dir} has been created.")
 
+
 create_data_dirs(const.DIRS)
+
 
 # Get league infomation, return teams that participate
 def get_league_info(league_id):
@@ -67,7 +68,6 @@ def get_league_info(league_id):
 
 # Get team data from file or via API call
 def get_team_data(team_id):
-
     team_folder = os.path.join(const.DATA_TEAMS, str(team_id))
     team_folder_path = f'team_results_{team_id}.json'
 
@@ -93,6 +93,7 @@ def get_team_data(team_id):
             return None
     return data
 
+
 # Get team result by each round
 def get_team_results(data):
     team_results = []
@@ -112,10 +113,11 @@ def get_team_cost(data):
     team_cost = []
     for event in data['current']:
         event_id = event['event']
-        value = event['value']/10
+        value = event['value'] / 10
         team_cost.append((event_id, value))
 
     return team_cost
+
 
 # Return total points per round
 def collect_team_results_by_each_round(teams):
@@ -130,26 +132,27 @@ def collect_team_results_by_each_round(teams):
     return team_results_dict
 
 
-# Return team place per round
+# Return team place per each round
 def collect_team_place_by_each_round(team_results_dict):
     round_places_dict = {}
 
-    # Create a dictionary to store the points of each team in each round
+    # Create a dictionary to store the place of each team in each round
     for team_name, team_results in team_results_dict.items():
         for round_num, points in team_results:
             if round_num not in round_places_dict:
                 round_places_dict[round_num] = {}
             round_places_dict[round_num][team_name] = points
 
-    # Sort the teams in each round based on their points
-    for round_num, teams_points in round_places_dict.items():
-        sorted_teams = sorted(teams_points.items(), key=lambda x: x[1], reverse=True)
+    # Sort the teams in each round based on their points and assign the place
+    for round_num, team_points in round_places_dict.items():
+        sorted_teams = sorted(team_points.items(), key=lambda x: x[1], reverse=True)
         places = {team[0]: i + 1 for i, team in enumerate(sorted_teams)}
         round_places_dict[round_num] = places
 
     return round_places_dict
 
 
+# Return team cost by each round
 def collect_team_cost_by_each_round(teams):
     team_cost_dict = {}
 
@@ -161,7 +164,8 @@ def collect_team_cost_by_each_round(teams):
 
     return team_cost_dict
 
-# build a plot 'Team Result' based on data object (list of dicts)
+
+# build a plot 'Team Result' based on data object
 def plot_team_results(data):
     fig = Figure(figsize=(10, 6))
     ax = fig.add_subplot(111)
@@ -180,7 +184,8 @@ def plot_team_results(data):
 
     return fig
 
-# build a plot 'Team Cost per round' based on data object (list of dicts)
+
+# build a plot 'Team Cost per round' based on data
 def plot_team_cost(data):
     fig = Figure(figsize=(10, 6))
     ax = fig.add_subplot(111)
@@ -199,24 +204,26 @@ def plot_team_cost(data):
 
     return fig
 
-# build a plot 'Team place per round' based on data object (list of dicts)
-def plot_team_place(data):
+
+# build a plot 'Team place per round' based on data
+def plot_team_place(team_places_dict):
     fig = Figure(figsize=(10, 6))
     ax = fig.add_subplot(111)
 
-    for team_name, round_places in data.items():
-        rounds = [round_num for round_num, _ in round_places.items()]
-        places = [place for _, place in round_places.items()]
+    teams = team_places_dict[38].keys()  # Get the team names from any round (38 in this case)
 
-        ax.plot(rounds, places, label=team_name)
+    for team in teams:
+        places = [team_places_dict[round_num][team] for round_num in sorted(team_places_dict.keys())]
+        ax.plot(range(1, len(places) + 1), places, label=team)
 
-    ax.set_title('Team place per round')
     ax.set_xlabel('Round')
     ax.set_ylabel('Place')
-    ax.legend()
+    ax.set_title('Team Places by Round')
+    ax.legend(loc='upper right')
     ax.grid(True)
 
     return fig
+
 
 # Gets data, build figure, returns png image
 def process_plot(fig):
@@ -227,9 +234,10 @@ def process_plot(fig):
     return base64.b64encode(image_stream.getvalue()).decode()
 
 
-@app.route('/',  methods=['GET'])
+@app.route('/', methods=['GET'])
 def load_page():
     return render_template(const.HOME_HTML)
+
 
 @app.route('/', methods=['POST'])
 def home():
@@ -260,7 +268,9 @@ def home():
     plot_image_3 = process_plot(fig_3)
 
     # Render html page
-    return render_template(const.HOME_HTML, plot_image_1=plot_image_1, plot_image_2=plot_image_2, plot_image_3=plot_image_3)
+    return render_template(const.HOME_HTML, plot_image_1=plot_image_1, plot_image_2=plot_image_2,
+                           plot_image_3=plot_image_3)
+
 
 if __name__ == '__main__':
     logger.info("App started.")
