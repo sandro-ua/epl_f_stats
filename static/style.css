@@ -1,0 +1,23 @@
+h2.h2style {
+    text-align: center;
+  }
+
+body {
+background-color: lightblue;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.plot-container {
+  text-align: center;
+}
+.plot-image {
+  max-width: 100%;
+  height: auto;
+}

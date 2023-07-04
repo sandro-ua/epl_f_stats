@@ -1,28 +1,10 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
+<link href="{{ url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css" />
 <title>Fantasy League stats</title>
-    <style>
-        body {
-            background-color: #82bcc1;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .plot-container {
-            text-align: center;
-        }
-        .plot-image {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
 </head>
+
 <body>
     <h1>Enter league code to see line graphs of teams in the league</h1>
 
@@ -31,7 +13,7 @@
         <button type="submit">Show</button>
     </form>
     {% if plot_image_1 %}
-    <h2>Total points per round</h2>
+    <h2 class="h2style">Total points per round</h2>
     <div class="plot-container">
         <img class="plot-image" src="data:image/png;base64,{{ plot_image_1 }}" alt="Plot_1">
     </div>
@@ -39,7 +21,7 @@
     <br>
     <br>
     {% if plot_image_2 %}
-    <h2>Total cost per round</h2>
+    <h2 class="h2style">Total cost per round</h2>
     <div class="plot-container">
         <img class="plot-image" src="data:image/png;base64,{{ plot_image_2 }}" alt="Plot_2">
     </div>
@@ -47,7 +29,7 @@
     <br>
     <br>
     {% if plot_image_3 %}
-    <h2>Team place per round</h2>
+    <h2 class="h2style">Team place per round</h2>
     <div class="plot-container">
         <img class="plot-image" src="data:image/png;base64,{{ plot_image_3 }}" alt="Plot_3">
     </div>

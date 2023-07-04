@@ -161,13 +161,12 @@ def collect_team_cost_by_each_round(teams):
         team_cost = get_team_cost(team_data)
         if team_cost is not None:
             team_cost_dict[team_name] = team_cost
-
     return team_cost_dict
 
 
 # build a plot 'Team Result' based on data object
 def plot_team_results(data):
-    fig = Figure(figsize=(10, 6))
+    fig = Figure(figsize=(const.PLOT_SIZE_X, const.PLOT_SIZE_Y))
     ax = fig.add_subplot(111)
 
     for team_name, round_points in data.items():
@@ -177,17 +176,18 @@ def plot_team_results(data):
         ax.plot(rounds, points, label=team_name)
 
     ax.set_title('Team Result')
-    ax.set_xlabel('Round')
-    ax.set_ylabel('Points')
+    ax.set_xlabel('Round', fontsize=const.AXE_FONT_SIZE_X)
+    ax.set_ylabel('Points', fontsize=const.AXE_FONT_SIZE_Y)
     ax.legend()
+    ax.minorticks_on()
+    fig.tight_layout()
     ax.grid(True)
-
     return fig
 
 
 # build a plot 'Team Cost per round' based on data
 def plot_team_cost(data):
-    fig = Figure(figsize=(10, 6))
+    fig = Figure(figsize=(const.PLOT_SIZE_X, const.PLOT_SIZE_Y))
     ax = fig.add_subplot(111)
 
     for team_name, round_points in data.items():
@@ -197,9 +197,11 @@ def plot_team_cost(data):
         ax.plot(rounds, cost, label=team_name)
 
     ax.set_title('Team Cost per round')
-    ax.set_xlabel('Round')
-    ax.set_ylabel('Cost')
+    ax.set_xlabel('Round', fontsize=const.AXE_FONT_SIZE_X)
+    ax.set_ylabel('Cost', fontsize=const.AXE_FONT_SIZE_Y)
     ax.legend()
+    ax.minorticks_on()
+    fig.tight_layout()
     ax.grid(True)
 
     return fig
@@ -207,19 +209,23 @@ def plot_team_cost(data):
 
 # build a plot 'Team place per round' based on data
 def plot_team_place(team_places_dict):
-    fig = Figure(figsize=(10, 6))
+    fig = Figure(figsize=(const.PLOT_SIZE_X, const.PLOT_SIZE_Y))
     ax = fig.add_subplot(111)
 
     teams = team_places_dict[38].keys()  # Get the team names from any round (38 in this case)
 
     for team in teams:
         places = [team_places_dict[round_num][team] for round_num in sorted(team_places_dict.keys())]
-        ax.plot(range(1, len(places) + 1), places, label=team)
+        ax.plot(range(1, len(places) + 1), places, label=team, linewidth=2)
 
-    ax.set_xlabel('Round')
-    ax.set_ylabel('Place')
+    ax.set_xlabel('Round', fontsize=const.AXE_FONT_SIZE_X)
+    ax.set_ylabel('Place', fontsize=const.AXE_FONT_SIZE_Y)
+    ax.invert_yaxis()
     ax.set_title('Team Places by Round')
-    ax.legend(loc='upper right')
+    ax.legend(bbox_to_anchor=(1.15, 1), loc='upper right', borderaxespad=1)
+    ax.minorticks_on()
+    fig.tight_layout()
+
     ax.grid(True)
 
     return fig
